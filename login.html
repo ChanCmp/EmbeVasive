@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk · PawFeeder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .auth { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+    .auth-card { width: 100%; max-width: 420px; }
+    .auth-hero { background: var(--hero-grad); color: #fff; border-radius: var(--radius); padding: 28px; margin-bottom: 16px; position: relative; overflow: hidden; }
+    .auth-hero::after { content: ""; position: absolute; right: -50px; top: -50px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.14); }
+    .auth-hero h1 { font-size: 26px; font-weight: 800; margin: 14px 0 6px; }
+    .auth-hero p { opacity: .92; font-size: 14px; }
+    .logo { width: 48px; height: 48px; border-radius: 16px; background: rgba(255,255,255,.25); display: grid; place-items: center; font-size: 26px; }
+  </style>
+</head>
+<body>
+  <main class="auth">
+    <div class="auth-card">
+      <div class="auth-hero">
+        <div class="logo" aria-hidden="true">🐾</div>
+        <h1>PawFeeder</h1>
+        <p>Lihat jadwal makan dan nafsu makan kucingmu dari mana saja.</p>
+      </div>
+      <div class="card">
+        <form class="form" id="loginForm" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input class="input" type="email" id="email" placeholder="nama@email.com" autocomplete="email" required>
+            <span class="hint">Kami kirim link masuk ke email ini — tanpa password.</span>
+          </div>
+          <div class="tiny" id="msg" role="status"></div>
+          <button class="btn btn-primary" type="submit" style="width:100%;padding:13px">Kirim link masuk</button>
+        </form>
+      </div>
+      <p class="tiny" style="text-align:center;margin-top:16px">Mode demo: <a href="index.html">lanjut ke dashboard</a></p>
+    </div>
+  </main>
+  <script>
+    // Supabase: await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/index.html' } })
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('msg');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.style.color = 'var(--st-urgent-ink)';
+        msg.textContent = 'Format email belum benar.';
+        return;
+      }
+      msg.style.color = 'var(--st-normal-ink)';
+      msg.textContent = `Link masuk dikirim ke ${email}. Cek inbox kamu.`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Setting lokal Claude Code
+.claude/settings.local.json
+
+# Rahasia (Supabase service role key, dll) — jangan pernah di-commit
+.env
+.env.*
+!.env.example
+
+# Node / Vercel (dipakai mulai Fase 2)
+node_modules/
+.vercel/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
