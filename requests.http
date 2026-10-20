@@ -1,0 +1,47 @@
+# =========================================================
+# Simulator ESP32 — jalankan dengan ekstensi VS Code "REST Client"
+# (humao.rest-client): klik "Send Request" di atas tiap request.
+#
+# Key demo dari database/seed.sql. Kalau sudah klik "Buat key baru" di
+# halaman Perangkat, ganti @key dengan key yang baru.
+# PERHATIAN: request POST/PATCH menulis data sungguhan ke database.
+# =========================================================
+
+@base = http://localhost:3000
+@key = pf_demo_7c1e0a2f9b4d4e8a8f3c6b5a1d2e0f9c
+
+### 1. Ambil jadwal aktif (alat memanggil ini saat boot)
+GET {{base}}/api/device/schedules
+X-Device-Key: {{key}}
+
+### 2. Heartbeat + sensor (alat memanggil ini tiap ±1 menit)
+POST {{base}}/api/device/readings
+X-Device-Key: {{key}}
+Content-Type: application/json
+
+{ "bowl_weight_g": 12.4, "hopper_level_pct": 63.5 }
+
+### 3. Makanan baru jatuh → catat sesi makan (ambil "id" dari respon)
+# @name feeding
+POST {{base}}/api/device/feedings
+X-Device-Key: {{key}}
+Content-Type: application/json
+
+{ "schedule_id": 1, "scheduled_at": "2026-10-20T07:00:00+07:00", "dispensed_g": 48.5 }
+
+### 4. Pet selesai makan → kirim sisa, status severity dihitung
+PATCH {{base}}/api/device/feedings/{{feeding.response.body.id}}
+X-Device-Key: {{key}}
+Content-Type: application/json
+
+{ "leftover_g": 6.2 }
+
+### 5. Uji: tanpa key → 401
+GET {{base}}/api/device/schedules
+
+### 6. Uji: sisa lebih besar dari yang jatuh → 400
+PATCH {{base}}/api/device/feedings/{{feeding.response.body.id}}
+X-Device-Key: {{key}}
+Content-Type: application/json
+
+{ "leftover_g": 999 }

@@ -1,108 +1,12 @@
-/* Implementasi data ASLI.
-   Baca  → Supabase langsung (anon key, RLS hanya mengizinkan SELECT) + Realtime
-   Tulis → Route Handlers di app/api (service role, ada validasi)
+/* Implementasi data ASLI — semua baca & tulis lewat Route Handlers di app/api
+   (backend memakai service role + validasi). Browser hanya memakai Supabase
+   langsung untuk Realtime (anon key, RLS hanya mengizinkan SELECT).
    Login belum ada: data yang dipakai = device pertama dan pet-nya. */
 import { getBrowserClient } from '@/frontend/supabase';
-import { classifyAll, currentBaseline } from '@/shared/domain/severity';
-import { buildNotifications, deviceView, normalizeSchedule } from '@/shared/domain/derive';
 import { addReadIds, readIds } from '@/frontend/utils/read-state';
 
-const DAY = 86400000;
-const BASELINE_EXTRA_DAYS = 14; // riwayat tambahan supaya baseline (10 sesi normal) bisa dihitung
-const FEEDING_COLS = 'id, schedule_id, scheduled_at, dispensed_g, leftover_g, status, synced_at';
-
 const sb = () => getBrowserClient();
-const num = (v) => (v == null ? null : Number(v));
-const toFeeding = (f) => ({ ...f, dispensed_g: num(f.dispensed_g), leftover_g: num(f.leftover_g) });
-const toDevice = (d) => ({
-  ...d,
-  bowl_weight_g: num(d.bowl_weight_g),
-  hopper_level_pct: num(d.hopper_level_pct),
-  hopper_capacity_g: num(d.hopper_capacity_g),
-});
 
-async function q(builder) {
-  const { data, error } = await builder;
-  if (error) {
-    if (/failed to fetch|network|load failed/i.test(error.message)) {
-      throw new Error('Tidak bisa terhubung ke Supabase. Periksa koneksi internet, atau project Supabase sedang di-pause (buka supabase.com → Restore project).');
-    }
-    throw new Error(`Gagal memuat data dari database: ${error.message}`);
-  }
-  return data;
-}
-
-async function currentDevice() {
-  const dev = await q(sb().from('devices').select('*').order('id').limit(1).maybeSingle());
-  if (!dev) throw new Error('Belum ada perangkat di database. Jalankan database/seed.sql.');
-  return toDevice(dev);
-}
-
-async function currentPet(deviceId) {
-  const pet = await q(sb().from('pets').select('*').eq('device_id', deviceId).maybeSingle());
-  if (!pet) throw new Error('Belum ada data pet di database. Jalankan database/seed.sql.');
-  return pet;
-}
-
-async function feedingsSince(petId, fromMs) {
-  const rows = await q(sb().from('feedings').select(FEEDING_COLS)
-    .eq('pet_id', petId).gte('scheduled_at', new Date(fromMs).toISOString()).order('scheduled_at'));
-  return rows.map(toFeeding);
-}
-
-/** Feedings dengan angka turunan; status tetap dari DB (threshold baru hanya untuk sesi baru). */
-async function classifiedFeedings(pet, days) {
-  const rows = await feedingsSince(pet.id, Date.now() - (days + BASELINE_EXTRA_DAYS) * DAY);
-  return classifyAll(rows, pet, { keepStatus: true });
-}
-
-async function deviceWithStock(dev) {
-  const weekAgo = Date.now() - 7 * DAY;
-  const refilled = dev.hopper_refilled_at ? new Date(dev.hopper_refilled_at).getTime() : weekAgo;
-  const pet = await currentPet(dev.id);
-  return deviceView(dev, await feedingsSince(pet.id, Math.min(weekAgo, refilled)));
-}
-
-// ------------------------------------------------------------------ baca
-export async function getSession() {
-  const dev = await currentDevice();
-  return q(sb().from('users').select('id, email').eq('id', dev.user_id).maybeSingle());
-}
-
-export async function getDevice() {
-  return deviceWithStock(await currentDevice());
-}
-
-export async function getPet() {
-  return currentPet((await currentDevice()).id);
-}
-
-export async function getSchedules() {
-  const dev = await currentDevice();
-  const rows = await q(sb().from('feeding_schedule').select('*').eq('device_id', dev.id).order('feed_time'));
-  return rows.map(normalizeSchedule);
-}
-
-export async function getFeedings({ days = 7 } = {}) {
-  const pet = await getPet();
-  const from = Date.now() - days * DAY;
-  return (await classifiedFeedings(pet, days))
-    .filter((f) => new Date(f.scheduled_at).getTime() >= from)
-    .reverse();
-}
-
-export async function getBaseline() {
-  return currentBaseline(await classifiedFeedings(await getPet(), 7));
-}
-
-export async function getNotifications() {
-  const dev = await currentDevice();
-  const pet = await currentPet(dev.id);
-  const [view, classified] = await Promise.all([deviceWithStock(dev), classifiedFeedings(pet, 7)]);
-  return buildNotifications({ pet, dev: view, classified, readIds: readIds() });
-}
-
-// ------------------------------------------------------------------ tulis (Route Handlers)
 async function call(method, url, body) {
   const isBlob = typeof Blob !== 'undefined' && body instanceof Blob;
   let res;
@@ -117,10 +21,24 @@ async function call(method, url, body) {
   }
   let data = null;
   try { data = await res.json(); } catch { /* respon tanpa body */ }
-  if (!res.ok) throw new Error((data && data.error) || `Gagal menyimpan (HTTP ${res.status}).`);
+  if (!res.ok) throw new Error((data && data.error) || `Permintaan gagal (HTTP ${res.status}).`);
   return data;
 }
 
+// ------------------------------------------------------------------ baca
+export const getSession = () => call('GET', '/api/user');
+export const getDevice = () => call('GET', '/api/device');
+export const getPet = () => call('GET', '/api/pet');
+export const getSchedules = () => call('GET', '/api/schedules');
+export const getFeedings = ({ days = 7 } = {}) => call('GET', `/api/feedings?days=${days}`);
+export const getBaseline = async () => (await call('GET', '/api/pet/baseline')).baseline_pct;
+
+export async function getNotifications() {
+  const read = readIds();
+  return (await call('GET', '/api/notifications')).map((n) => ({ ...n, read: read.has(n.id) }));
+}
+
+// ------------------------------------------------------------------ tulis
 export const addSchedule = ({ feed_time }) => call('POST', '/api/schedules', { feed_time });
 export const updateSchedule = (id, patch) => call('PATCH', `/api/schedules/${id}`, patch);
 export const deleteSchedule = (id) => call('DELETE', `/api/schedules/${id}`);

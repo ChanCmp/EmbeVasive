@@ -1,7 +1,16 @@
+// GET  /api/schedules  → semua jadwal, urut jam
 // POST /api/schedules  body: { feed_time: "HH:MM" } → jadwal baru (aktif)
 import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
 import { fail, handle, json, PG, readJson, requireTime } from '@/backend/http';
 import { normalizeSchedule } from '@/shared/domain/derive';
+import { deviceOrFail, q } from '@/backend/data';
+
+export const GET = handle(async () => {
+  const dev = await deviceOrFail();
+  const rows = await q(getServiceClient()
+    .from('feeding_schedule').select('*').eq('device_id', dev.id).order('feed_time'));
+  return json(rows.map(normalizeSchedule));
+});
 
 export const POST = handle(async (req) => {
   const body = await readJson(req);

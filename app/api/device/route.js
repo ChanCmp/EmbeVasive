@@ -1,2 +1,2 @@
 // Logika ada di backend/routes/device.js
-export { PATCH } from '@/backend/routes/device';
+export { GET, PATCH } from '@/backend/routes/device';

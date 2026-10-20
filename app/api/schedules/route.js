@@ -1,2 +1,2 @@
 // Logika ada di backend/routes/schedules.js
-export { POST } from '@/backend/routes/schedules';
+export { GET, POST } from '@/backend/routes/schedules';

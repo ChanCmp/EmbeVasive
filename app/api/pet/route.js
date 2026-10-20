@@ -1,2 +1,2 @@
 // Logika ada di backend/routes/pet.js
-export { PATCH } from '@/backend/routes/pet';
+export { GET, PATCH } from '@/backend/routes/pet';

@@ -1,6 +1,13 @@
+// GET   /api/device  → perangkat + status stok/online (tanpa api_key_hash)
 // PATCH /api/device  body: { name }
 import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
 import { fail, handle, json, readJson, requireText } from '@/backend/http';
+import { deviceOrFail, deviceWithStock, petOrFail } from '@/backend/data';
+
+export const GET = handle(async () => {
+  const dev = await deviceOrFail();
+  return json(await deviceWithStock(dev, await petOrFail(dev.id)));
+});
 
 export const PATCH = handle(async (req) => {
   const body = await readJson(req);

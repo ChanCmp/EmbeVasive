@@ -47,6 +47,11 @@ export function requireInt(v, field, min, max) {
   return v;
 }
 
+export function requireNumber(v, field, min, max) {
+  if (typeof v !== 'number' || !Number.isFinite(v) || v < min || v > max) fail(`${field} harus angka ${min}–${max}.`);
+  return Math.round(v * 10) / 10; // kolom numeric(…,1)
+}
+
 export function requireText(v, field, maxLen = 40) {
   if (typeof v !== 'string' || !v.trim()) fail(`${field} wajib diisi.`);
   const t = v.trim();

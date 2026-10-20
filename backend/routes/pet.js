@@ -1,7 +1,14 @@
+// GET   /api/pet  → data pet milik perangkat
 // PATCH /api/pet  body: { name, watch_pct, moderate_pct, urgent_pct, moderate_session }
 // Threshold baru hanya berlaku untuk sesi makan berikutnya — status lama tidak dihitung ulang.
 import { getCurrentDevice, getCurrentPet, getServiceClient } from '@/backend/supabase';
 import { fail, handle, json, readJson, requireInt, requireText } from '@/backend/http';
+import { deviceOrFail, petOrFail } from '@/backend/data';
+
+export const GET = handle(async () => {
+  const dev = await deviceOrFail();
+  return json(await petOrFail(dev.id));
+});
 
 export const PATCH = handle(async (req) => {
   const body = await readJson(req);
