@@ -1,4 +1,4 @@
-import DashboardView from '@/components/views/DashboardView';
+import DashboardView from '@/frontend/components/views/DashboardView';
 
 export const metadata = { title: 'Ringkasan' };
 

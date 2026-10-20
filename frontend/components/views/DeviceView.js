@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-import Icon from '@/components/Icon';
-import Modal from '@/components/Modal';
-import { useApp } from '@/components/AppShell';
-import { useAction, useData } from '@/components/hooks';
-import { DeviceChip, Loading, LoadError, Topbar } from '@/components/ui';
-import { getDevice, LOW_STOCK_PCT, markRefilled, regenerateApiKey, updateDevice } from '@/lib/data/api';
-import { fmtDate, fmtNum, fmtTime, timeAgo } from '@/lib/utils/format';
+import Icon from '@/frontend/components/Icon';
+import Modal from '@/frontend/components/Modal';
+import { useApp } from '@/frontend/components/AppShell';
+import { useAction, useData } from '@/frontend/components/hooks';
+import { DeviceChip, Loading, LoadError, Topbar } from '@/frontend/components/ui';
+import { getDevice, LOW_STOCK_PCT, markRefilled, regenerateApiKey, updateDevice } from '@/frontend/data/api';
+import { fmtDate, fmtNum, fmtTime, timeAgo } from '@/frontend/utils/format';
 
 const TITLE = 'Perangkat';
 

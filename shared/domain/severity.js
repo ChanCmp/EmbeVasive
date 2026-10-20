@@ -1,7 +1,7 @@
 /* =========================================================
    Klasifikasi severity nafsu makan.
    Dipakai di frontend untuk preview threshold; logika yang sama ada di
-   database sebagai fungsi SQL reclassify_feedings() (supabase/schema.sql).
+   database sebagai fungsi SQL reclassify_feedings() (database/schema.sql).
 
    Definisi:
      consumed_pct = (dispensed_g - leftover_g) / dispensed_g * 100

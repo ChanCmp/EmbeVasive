@@ -1,8 +1,8 @@
 // PATCH  /api/schedules/[id]  body: { feed_time?: "HH:MM", is_active?: boolean }
 // DELETE /api/schedules/[id]  (riwayat makan tetap ada, feedings.schedule_id → NULL)
-import { getCurrentDevice, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json, PG, readJson, requireId, requireTime } from '@/lib/server/http';
-import { normalizeSchedule } from '@/lib/domain/derive';
+import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json, PG, readJson, requireId, requireTime } from '@/backend/http';
+import { normalizeSchedule } from '@/shared/domain/derive';
 
 async function deviceOrFail() {
   const dev = await getCurrentDevice();

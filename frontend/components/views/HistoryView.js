@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-import Icon from '@/components/Icon';
-import BarChart from '@/components/BarChart';
-import { useData } from '@/components/hooks';
-import { ChartLegend, Loading, LoadError, SevBadge, Topbar } from '@/components/ui';
-import { getBaseline, getFeedings } from '@/lib/data/api';
-import { SEVERITY_META } from '@/lib/domain/severity';
-import { fmtDate, fmtNum, fmtTime } from '@/lib/utils/format';
+import Icon from '@/frontend/components/Icon';
+import BarChart from '@/frontend/components/BarChart';
+import { useData } from '@/frontend/components/hooks';
+import { ChartLegend, Loading, LoadError, SevBadge, Topbar } from '@/frontend/components/ui';
+import { getBaseline, getFeedings } from '@/frontend/data/api';
+import { SEVERITY_META } from '@/shared/domain/severity';
+import { fmtDate, fmtNum, fmtTime } from '@/frontend/utils/format';
 
 const TITLE = 'Riwayat Makan';
 

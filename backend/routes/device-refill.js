@@ -1,6 +1,6 @@
 // POST /api/device/refill → hopper dianggap penuh lagi (sensor ultrasonik belum terpasang)
-import { getCurrentDevice, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json } from '@/lib/server/http';
+import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json } from '@/backend/http';
 
 export const POST = handle(async () => {
   const dev = await getCurrentDevice();

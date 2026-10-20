@@ -1,8 +1,8 @@
 // POST /api/device/api-key → buat API key alat baru.
 // Hanya hash SHA-256 yang disimpan; key asli dikembalikan SEKALI ke browser.
 import { createHash, randomBytes } from 'node:crypto';
-import { getCurrentDevice, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json } from '@/lib/server/http';
+import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json } from '@/backend/http';
 
 export const POST = handle(async () => {
   const dev = await getCurrentDevice();

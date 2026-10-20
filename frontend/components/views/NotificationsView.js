@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
-import Icon from '@/components/Icon';
-import { useApp } from '@/components/AppShell';
-import { useData } from '@/components/hooks';
-import { Loading, LoadError, NotifItem, SevBadge, Topbar } from '@/components/ui';
-import { getNotifications, markAllRead, markNotificationRead } from '@/lib/data/api';
+import Icon from '@/frontend/components/Icon';
+import { useApp } from '@/frontend/components/AppShell';
+import { useData } from '@/frontend/components/hooks';
+import { Loading, LoadError, NotifItem, SevBadge, Topbar } from '@/frontend/components/ui';
+import { getNotifications, markAllRead, markNotificationRead } from '@/frontend/data/api';
 
 const TITLE = 'Notifikasi';
 

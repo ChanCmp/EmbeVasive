@@ -1,4 +1,4 @@
-import LoginView from '@/components/views/LoginView';
+import LoginView from '@/frontend/components/views/LoginView';
 
 export const metadata = { title: 'Masuk' };
 

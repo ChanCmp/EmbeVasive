@@ -1,6 +1,6 @@
 // PATCH /api/device  body: { name }
-import { getCurrentDevice, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json, readJson, requireText } from '@/lib/server/http';
+import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json, readJson, requireText } from '@/backend/http';
 
 export const PATCH = handle(async (req) => {
   const body = await readJson(req);

@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
-import Icon from '@/components/Icon';
-import Modal from '@/components/Modal';
-import { useAction, useData } from '@/components/hooks';
-import { Loading, LoadError, Topbar } from '@/components/ui';
-import { addSchedule, deleteSchedule, getDevice, getFeedings, getSchedules, updateSchedule } from '@/lib/data/api';
-import { fmtNum, nextFeeding, untilText } from '@/lib/utils/format';
+import Icon from '@/frontend/components/Icon';
+import Modal from '@/frontend/components/Modal';
+import { useAction, useData } from '@/frontend/components/hooks';
+import { Loading, LoadError, Topbar } from '@/frontend/components/ui';
+import { addSchedule, deleteSchedule, getDevice, getFeedings, getSchedules, updateSchedule } from '@/frontend/data/api';
+import { fmtNum, nextFeeding, untilText } from '@/frontend/utils/format';
 
 const TITLE = 'Jadwal Makan';
 

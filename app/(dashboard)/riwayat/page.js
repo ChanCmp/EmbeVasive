@@ -1,4 +1,4 @@
-import HistoryView from '@/components/views/HistoryView';
+import HistoryView from '@/frontend/components/views/HistoryView';
 
 export const metadata = { title: 'Riwayat Makan' };
 

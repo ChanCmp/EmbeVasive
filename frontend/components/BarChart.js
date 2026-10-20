@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
-import { SEVERITY_META } from '@/lib/domain/severity';
-import { fmtDate, fmtNum, fmtTime } from '@/lib/utils/format';
+import { SEVERITY_META } from '@/shared/domain/severity';
+import { fmtDate, fmtNum, fmtTime } from '@/frontend/utils/format';
 
 const W = 680, H = 250, PL = 38, PR = 10, PT = 14, PB = 30;
 const STATUS_VAR = { normal: '--st-normal', watch: '--st-watch', moderate: '--st-moderate', urgent: '--st-urgent' };

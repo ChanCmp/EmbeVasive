@@ -1,4 +1,4 @@
-import PetView from '@/components/views/PetView';
+import PetView from '@/frontend/components/views/PetView';
 
 export const metadata = { title: 'Profil Pet' };
 

@@ -1,4 +1,4 @@
-import ScheduleView from '@/components/views/ScheduleView';
+import ScheduleView from '@/frontend/components/views/ScheduleView';
 
 export const metadata = { title: 'Jadwal' };
 

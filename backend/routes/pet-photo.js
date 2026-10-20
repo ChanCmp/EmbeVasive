@@ -1,8 +1,8 @@
 // POST   /api/pet/photo  body: JPEG mentah (Content-Type: image/jpeg, maks 1 MB)
 //        → simpan di bucket pet-photos, isi pets.photo_url, hapus foto lama
 // DELETE /api/pet/photo  → hapus file + pets.photo_url = null
-import { getCurrentDevice, getCurrentPet, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json } from '@/lib/server/http';
+import { getCurrentDevice, getCurrentPet, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json } from '@/backend/http';
 
 const BUCKET = 'pet-photos';
 const MAX_BYTES = 1024 * 1024;

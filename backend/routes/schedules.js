@@ -1,7 +1,7 @@
 // POST /api/schedules  body: { feed_time: "HH:MM" } → jadwal baru (aktif)
-import { getCurrentDevice, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json, PG, readJson, requireTime } from '@/lib/server/http';
-import { normalizeSchedule } from '@/lib/domain/derive';
+import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json, PG, readJson, requireTime } from '@/backend/http';
+import { normalizeSchedule } from '@/shared/domain/derive';
 
 export const POST = handle(async (req) => {
   const body = await readJson(req);

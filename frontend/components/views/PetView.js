@@ -1,13 +1,13 @@
 'use client';
 import { useMemo, useState } from 'react';
-import Icon from '@/components/Icon';
-import Modal from '@/components/Modal';
-import { useApp } from '@/components/AppShell';
-import { useAction, useData } from '@/components/hooks';
-import { Loading, LoadError, PetPhoto, SevBadge, Topbar } from '@/components/ui';
-import { getFeedings, getPet, removePetPhoto, updatePet } from '@/lib/data/api';
-import { BASELINE_WINDOW, classifyAll, SEVERITY_META } from '@/lib/domain/severity';
-import { fmtDate, fmtTime } from '@/lib/utils/format';
+import Icon from '@/frontend/components/Icon';
+import Modal from '@/frontend/components/Modal';
+import { useApp } from '@/frontend/components/AppShell';
+import { useAction, useData } from '@/frontend/components/hooks';
+import { Loading, LoadError, PetPhoto, SevBadge, Topbar } from '@/frontend/components/ui';
+import { getFeedings, getPet, removePetPhoto, updatePet } from '@/frontend/data/api';
+import { BASELINE_WINDOW, classifyAll, SEVERITY_META } from '@/shared/domain/severity';
+import { fmtDate, fmtTime } from '@/frontend/utils/format';
 
 const TITLE = 'Profil Pet';
 const LETTER = { normal: 'N', watch: 'R', moderate: 'S', urgent: '!' };

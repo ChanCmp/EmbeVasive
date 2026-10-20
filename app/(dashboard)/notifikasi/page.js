@@ -1,4 +1,4 @@
-import NotificationsView from '@/components/views/NotificationsView';
+import NotificationsView from '@/frontend/components/views/NotificationsView';
 
 export const metadata = { title: 'Notifikasi' };
 

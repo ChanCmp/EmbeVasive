@@ -8,7 +8,7 @@
 import * as mock from './api-mock';
 import * as real from './api-supabase';
 
-export { LOW_STOCK_PCT } from '@/lib/domain/derive';
+export { LOW_STOCK_PCT } from '@/shared/domain/derive';
 
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 const impl = USE_MOCK ? mock : real;

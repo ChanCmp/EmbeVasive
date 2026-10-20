@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
-import BarChart from '@/components/BarChart';
-import { useApp } from '@/components/AppShell';
-import { useData } from '@/components/hooks';
-import { ChartLegend, DeviceChip, Loading, LoadError, NotifItem, PetPhoto, SevBadge, Topbar } from '@/components/ui';
-import { getBaseline, getDevice, getFeedings, getNotifications, getPet, getSchedules } from '@/lib/data/api';
-import { fmtDateLong, fmtNum, fmtTime, greeting, nextFeeding, sameDay, timeAgo, untilText } from '@/lib/utils/format';
+import Icon from '@/frontend/components/Icon';
+import BarChart from '@/frontend/components/BarChart';
+import { useApp } from '@/frontend/components/AppShell';
+import { useData } from '@/frontend/components/hooks';
+import { ChartLegend, DeviceChip, Loading, LoadError, NotifItem, PetPhoto, SevBadge, Topbar } from '@/frontend/components/ui';
+import { getBaseline, getDevice, getFeedings, getNotifications, getPet, getSchedules } from '@/frontend/data/api';
+import { fmtDateLong, fmtNum, fmtTime, greeting, nextFeeding, sameDay, timeAgo, untilText } from '@/frontend/utils/format';
 
 const HEADLINE = {
   normal: 'Makan dengan baik',

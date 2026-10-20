@@ -6,8 +6,8 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Icon from './Icon';
-import { getNotifications, getSession, subscribe, uploadPetPhoto } from '@/lib/data/api';
-import { PHOTO_TYPES, resizeImage } from '@/lib/utils/photo';
+import { getNotifications, getSession, subscribe, uploadPetPhoto } from '@/frontend/data/api';
+import { PHOTO_TYPES, resizeImage } from '@/frontend/utils/photo';
 
 const AppCtx = createContext(null);
 export const useApp = () => useContext(AppCtx);

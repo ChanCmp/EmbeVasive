@@ -1,5 +1,5 @@
 /* =========================================================
-   Data mock — struktur kolom mengikuti tabel di supabase/schema.sql:
+   Data mock — struktur kolom mengikuti tabel di database/schema.sql:
    users, devices, pets, feeding_schedule, feedings.
    Dibuat sekali saat pertama dipakai (hanya di browser), lalu dipakai
    bersama oleh semua halaman selama tab terbuka.

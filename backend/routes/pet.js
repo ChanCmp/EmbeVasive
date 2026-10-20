@@ -1,7 +1,7 @@
 // PATCH /api/pet  body: { name, watch_pct, moderate_pct, urgent_pct, moderate_session }
 // Threshold baru hanya berlaku untuk sesi makan berikutnya — status lama tidak dihitung ulang.
-import { getCurrentDevice, getCurrentPet, getServiceClient } from '@/lib/supabase/server';
-import { fail, handle, json, readJson, requireInt, requireText } from '@/lib/server/http';
+import { getCurrentDevice, getCurrentPet, getServiceClient } from '@/backend/supabase';
+import { fail, handle, json, readJson, requireInt, requireText } from '@/backend/http';
 
 export const PATCH = handle(async (req) => {
   const body = await readJson(req);

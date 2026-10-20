@@ -1,9 +1,9 @@
 /* Implementasi data MOCK (tanpa database). Aktif bila NEXT_PUBLIC_USE_MOCK=true.
    Nama & bentuk fungsi sama persis dengan lib/data/api-supabase.js. */
 import { getDB as getMockDB } from './mock-data';
-import { classifyAll, currentBaseline } from '@/lib/domain/severity';
-import { buildNotifications, deviceView } from '@/lib/domain/derive';
-import { addReadIds, readIds } from '@/lib/utils/read-state';
+import { classifyAll, currentBaseline } from '@/shared/domain/severity';
+import { buildNotifications, deviceView } from '@/shared/domain/derive';
+import { addReadIds, readIds } from '@/frontend/utils/read-state';
 
 const PHOTO_KEY = 'petfeeder.petPhoto';
 const DAY = 86400000;

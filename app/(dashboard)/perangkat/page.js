@@ -1,4 +1,4 @@
-import DeviceView from '@/components/views/DeviceView';
+import DeviceView from '@/frontend/components/views/DeviceView';
 
 export const metadata = { title: 'Perangkat' };
 

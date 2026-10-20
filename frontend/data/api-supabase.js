@@ -2,10 +2,10 @@
    Baca  → Supabase langsung (anon key, RLS hanya mengizinkan SELECT) + Realtime
    Tulis → Route Handlers di app/api (service role, ada validasi)
    Login belum ada: data yang dipakai = device pertama dan pet-nya. */
-import { getBrowserClient } from '@/lib/supabase/browser';
-import { classifyAll, currentBaseline } from '@/lib/domain/severity';
-import { buildNotifications, deviceView, normalizeSchedule } from '@/lib/domain/derive';
-import { addReadIds, readIds } from '@/lib/utils/read-state';
+import { getBrowserClient } from '@/frontend/supabase';
+import { classifyAll, currentBaseline } from '@/shared/domain/severity';
+import { buildNotifications, deviceView, normalizeSchedule } from '@/shared/domain/derive';
+import { addReadIds, readIds } from '@/frontend/utils/read-state';
 
 const DAY = 86400000;
 const BASELINE_EXTRA_DAYS = 14; // riwayat tambahan supaya baseline (10 sesi normal) bisa dihitung
@@ -34,13 +34,13 @@ async function q(builder) {
 
 async function currentDevice() {
   const dev = await q(sb().from('devices').select('*').order('id').limit(1).maybeSingle());
-  if (!dev) throw new Error('Belum ada perangkat di database. Jalankan supabase/seed.sql.');
+  if (!dev) throw new Error('Belum ada perangkat di database. Jalankan database/seed.sql.');
   return toDevice(dev);
 }
 
 async function currentPet(deviceId) {
   const pet = await q(sb().from('pets').select('*').eq('device_id', deviceId).maybeSingle());
-  if (!pet) throw new Error('Belum ada data pet di database. Jalankan supabase/seed.sql.');
+  if (!pet) throw new Error('Belum ada data pet di database. Jalankan database/seed.sql.');
   return pet;
 }
 

@@ -2,8 +2,8 @@
 // Komponen kecil yang dipakai banyak halaman
 import Icon from './Icon';
 import { useApp } from './AppShell';
-import { SEVERITY_META } from '@/lib/domain/severity';
-import { timeAgo } from '@/lib/utils/format';
+import { SEVERITY_META } from '@/shared/domain/severity';
+import { timeAgo } from '@/frontend/utils/format';
 
 const SEV_ICON = { normal: 'checkCircle', watch: 'eye', moderate: 'alert', urgent: 'octagon', pending: 'clock' };
 
