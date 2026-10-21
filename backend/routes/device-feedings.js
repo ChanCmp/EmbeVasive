@@ -2,7 +2,7 @@
 //      body: { schedule_id?, scheduled_at: ISO 8601, dispensed_g } → 201 { id, status }
 //      Dipanggil tepat setelah dropper menjatuhkan makanan. leftover_g menyusul lewat PATCH.
 import { getServiceClient } from '@/backend/supabase';
-import { fail, handle, json, readJson, requireId, requireNumber } from '@/backend/http';
+import { fail, handle, json, PG, readJson, requireId, requireNumber } from '@/backend/http';
 import { petOrFail, q } from '@/backend/data';
 import { deviceFromKey } from '@/backend/device-auth';
 
@@ -23,8 +23,12 @@ export const POST = handle(async (req) => {
     if (!s) fail('Jadwal tidak ditemukan untuk alat ini.', 404);
   }
 
-  const data = await q(db.from('feedings')
+  const { data, error } = await db.from('feedings')
     .insert({ device_id: dev.id, pet_id: pet.id, schedule_id, scheduled_at: at.toISOString(), dispensed_g })
-    .select('id, status').single());
+    .select('id, status').single();
+  if (error) {
+    if (error.code === PG.UNIQUE) fail('Sesi makan untuk scheduled_at ini sudah tercatat.', 409);
+    throw error;
+  }
   return json(data, 201);
 });

@@ -27,7 +27,7 @@ POST {{base}}/api/device/feedings
 X-Device-Key: {{key}}
 Content-Type: application/json
 
-{ "schedule_id": 1, "scheduled_at": "2026-10-20T07:00:00+07:00", "dispensed_g": 48.5 }
+{ "schedule_id": 1, "scheduled_at": "{{$datetime iso8601}}", "dispensed_g": 48.5 }
 
 ### 4. Pet selesai makan → kirim sisa, status severity dihitung
 PATCH {{base}}/api/device/feedings/{{feeding.response.body.id}}

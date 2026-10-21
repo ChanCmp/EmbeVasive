@@ -9,6 +9,7 @@
 --   • pets.device_id UNIQUE (1 feeder = 1 pet), pets.photo_url
 --   • devices.hopper_level_pct + hopper_read_at (sensor ultrasonik)
 --   • fungsi reclassify_feedings() untuk menghitung status severity
+--   • feedings unik per (device_id, scheduled_at)
 -- =========================================================
 
 drop table if exists public.feedings cascade;
@@ -69,7 +70,8 @@ create table public.feedings (
   dispensed_g  numeric(6,1) not null check (dispensed_g >= 0),
   leftover_g   numeric(6,1) check (leftover_g >= 0 and leftover_g <= dispensed_g), -- null = masih dipantau
   status       text not null default 'normal' check (status in ('normal', 'watch', 'moderate', 'urgent')),
-  synced_at    timestamptz not null default now()
+  synced_at    timestamptz not null default now(),
+  constraint feedings_device_scheduled_unique unique (device_id, scheduled_at) -- alat kirim ulang → 409, bukan duplikat
 );
 
 create index feedings_pet_time_idx on public.feedings (pet_id, scheduled_at desc);
