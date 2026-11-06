@@ -7,8 +7,8 @@ import { fail, handle, json } from '@/backend/http';
 const BUCKET = 'pet-photos';
 const MAX_BYTES = 1024 * 1024;
 
-async function petOrFail() {
-  const dev = await getCurrentDevice();
+async function petOrFail(req) {
+  const dev = await getCurrentDevice(req);
   if (!dev) fail('Perangkat belum terdaftar.', 404);
   const pet = await getCurrentPet(dev.id);
   if (!pet) fail('Pet belum terdaftar.', 404);
@@ -38,7 +38,7 @@ export const POST = handle(async (req) => {
   if (buf.length > MAX_BYTES) fail('Ukuran foto maksimal 1 MB setelah dikompres.', 413);
   if (!(buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff)) fail('File bukan JPEG yang valid.', 415);
 
-  const pet = await petOrFail();
+  const pet = await petOrFail(req);
   const db = getServiceClient();
   const path = `pet-${pet.id}-${Date.now()}.jpg`;
 
@@ -55,8 +55,8 @@ export const POST = handle(async (req) => {
   return json({ photo_url: data.photo_url }, 201);
 });
 
-export const DELETE = handle(async () => {
-  const pet = await petOrFail();
+export const DELETE = handle(async (req) => {
+  const pet = await petOrFail(req);
   const { error } = await getServiceClient().from('pets').update({ photo_url: null }).eq('id', pet.id);
   if (error) throw error;
   await removeOld(pet.photo_url);

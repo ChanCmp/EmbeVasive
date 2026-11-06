@@ -6,7 +6,8 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Icon from './Icon';
-import { getNotifications, getSession, subscribe, uploadPetPhoto } from '@/frontend/data/api';
+import ConnectDeviceView from './views/ConnectDeviceView';
+import { getNotifications, getSession, signOut, subscribe, uploadPetPhoto } from '@/frontend/data/api';
 import { PHOTO_TYPES, resizeImage } from '@/frontend/utils/photo';
 
 const AppCtx = createContext(null);
@@ -27,7 +28,7 @@ const THEME_KEY = 'petfeeder.theme';
 
 export default function AppShell({ children }) {
   const pathname = usePathname();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined); // undefined = masih dimuat, null = gagal dimuat
   const [unread, setUnread] = useState(0);
   const [version, setVersion] = useState(0); // naik setiap ada perubahan data -> halaman memuat ulang
   const [live, setLive] = useState(null);    // { bowl, at } dari realtime
@@ -43,7 +44,18 @@ export default function AppShell({ children }) {
 
   const refresh = useCallback(() => setVersion((v) => v + 1), []);
 
-  useEffect(() => { getSession().then(setUser).catch(() => setUser(null)); }, [version]);
+  useEffect(() => {
+    getSession().then(setUser).catch((err) => {
+      if (err.status === 401) window.location.replace('/login'); // belum login / sesi habis
+      else setUser(null);
+    });
+  }, [version]);
+
+  const logout = async (e) => {
+    e.preventDefault();
+    await signOut();
+    window.location.replace('/login');
+  };
 
   useEffect(() => {
     let alive = true;
@@ -123,13 +135,15 @@ export default function AppShell({ children }) {
               <div className="avatar">{user ? user.email[0].toUpperCase() : '?'}</div>
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div className="email">{user ? user.email : '—'}</div>
-                <Link className="tiny" href="/login">Keluar</Link>
+                <a className="tiny" href="/login" onClick={logout}>Keluar</a>
               </div>
             </div>
           </div>
         </aside>
 
-        <main className="main" tabIndex={-1}>{children}</main>
+        <main className="main" tabIndex={-1}>
+          {user === undefined ? null : user && user.device_id == null ? <ConnectDeviceView onConnected={refresh} /> : children}
+        </main>
       </div>
 
       <nav className="mobile-nav" aria-label="Navigasi">{NAV.map((r) => navItem(r, true))}</nav>

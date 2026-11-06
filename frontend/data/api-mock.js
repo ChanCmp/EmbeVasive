@@ -23,7 +23,12 @@ const delay = (v, ms = 180) => new Promise((r) => setTimeout(() => r(structuredC
 const view = () => { const db = getDB(); return deviceView(db.devices[0], db.feedings); };
 const classified = () => { const db = getDB(); return classifyAll(db.feedings, db.pets[0]); };
 
-export const getSession = async () => delay(getDB().users[0], 50);
+export const getSession = async () => { const db = getDB(); return delay({ ...db.users[0], device_id: db.devices[0].id }, 50); };
+// mock: login & hubungkan perangkat selalu berhasil
+export const signIn = async () => {};
+export const signUp = async () => true;
+export const signOut = async () => {};
+export const claimDevice = async (device_id) => ({ device_id });
 export const getDevice = async () => delay(view());
 export const getPet = async () => delay(getDB().pets[0]);
 

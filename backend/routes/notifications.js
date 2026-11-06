@@ -4,8 +4,8 @@ import { handle, json } from '@/backend/http';
 import { classifiedFeedings, deviceOrFail, deviceWithStock, petOrFail } from '@/backend/data';
 import { buildNotifications } from '@/shared/domain/derive';
 
-export const GET = handle(async () => {
-  const dev = await deviceOrFail();
+export const GET = handle(async (req) => {
+  const dev = await deviceOrFail(req);
   const pet = await petOrFail(dev.id);
   const [view, classified] = await Promise.all([deviceWithStock(dev, pet), classifiedFeedings(pet, 7)]);
   const items = buildNotifications({ pet, dev: view, classified, readIds: new Set() });

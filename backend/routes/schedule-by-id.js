@@ -4,8 +4,8 @@ import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
 import { fail, handle, json, PG, readJson, requireId, requireTime } from '@/backend/http';
 import { normalizeSchedule } from '@/shared/domain/derive';
 
-async function deviceOrFail() {
-  const dev = await getCurrentDevice();
+async function deviceOrFail(req) {
+  const dev = await getCurrentDevice(req);
   if (!dev) fail('Perangkat belum terdaftar.', 404);
   return dev;
 }
@@ -22,7 +22,7 @@ export const PATCH = handle(async (req, ctx) => {
   }
   if (!Object.keys(patch).length) fail('Tidak ada perubahan yang dikirim.');
 
-  const dev = await deviceOrFail();
+  const dev = await deviceOrFail(req);
   const { data, error } = await getServiceClient()
     .from('feeding_schedule')
     .update(patch)
@@ -38,9 +38,9 @@ export const PATCH = handle(async (req, ctx) => {
   return json(normalizeSchedule(data));
 });
 
-export const DELETE = handle(async (_req, ctx) => {
+export const DELETE = handle(async (req, ctx) => {
   const id = requireId((await ctx.params).id);
-  const dev = await deviceOrFail();
+  const dev = await deviceOrFail(req);
   const { data, error } = await getServiceClient()
     .from('feeding_schedule')
     .delete()

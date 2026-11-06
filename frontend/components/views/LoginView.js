@@ -1,47 +1,62 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
+import { signIn, signUp } from '@/frontend/data/api';
 
 export default function LoginView() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [msg, setMsg] = useState(null); // { ok, text }
+  const [busy, setBusy] = useState(false);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    // Supabase (nanti): supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin } })
+  const submit = async (mode) => {
     const value = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       setMsg({ ok: false, text: 'Format email belum benar.' });
       return;
     }
-    setMsg({ ok: true, text: `Link masuk dikirim ke ${value}. Cek inbox kamu.` });
+    if (password.length < 6) {
+      setMsg({ ok: false, text: 'Password minimal 6 karakter.' });
+      return;
+    }
+    setBusy(true);
+    setMsg(null);
+    try {
+      if (mode === 'up' && !(await signUp(value, password))) {
+        setMsg({ ok: true, text: `Akun dibuat. Cek email ${value} untuk konfirmasi, lalu masuk.` });
+        return;
+      }
+      if (mode === 'in') await signIn(value, password);
+      window.location.replace('/');
+    } catch (err) {
+      setMsg({ ok: false, text: err.message });
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <main className="auth">
       <div className="auth-card">
-        <div className="auth-hero">
-          <div className="logo" aria-hidden="true">🐾</div>
-          <h1>PawFeeder</h1>
-          <p>Lihat jadwal makan dan nafsu makan kucingmu dari mana saja.</p>
-        </div>
         <div className="card">
-          <form className="form" onSubmit={onSubmit} noValidate>
+          <form className="form" onSubmit={(e) => { e.preventDefault(); submit('in'); }} noValidate>
             <div className="field">
               <label htmlFor="email">Email</label>
               <input className="input" type="email" id="email" placeholder="nama@email.com" autoComplete="email" required
                 value={email} onChange={(e) => setEmail(e.target.value)} />
-              <span className="hint">Kami kirim link masuk ke email ini — tanpa password.</span>
+            </div>
+            <div className="field">
+              <label htmlFor="password">Password</label>
+              <input className="input" type="password" id="password" autoComplete="current-password" required minLength={6}
+                value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <div className="tiny" role="status" style={msg ? { color: msg.ok ? 'var(--st-normal-ink)' : 'var(--st-urgent-ink)' } : undefined}>
               {msg && msg.text}
             </div>
-            <button className="btn btn-primary" type="submit" style={{ width: '100%', padding: 13 }}>Kirim link masuk</button>
+            <button className="btn btn-primary" type="submit" disabled={busy} style={{ width: '100%', padding: 13 }}>Masuk</button>
+            <button className="btn btn-ghost" type="button" disabled={busy} style={{ width: '100%', padding: 13 }}
+              onClick={() => submit('up')}>Daftar akun baru</button>
           </form>
         </div>
-        <p className="tiny" style={{ textAlign: 'center', marginTop: 16 }}>
-          Mode demo: <Link href="/">lanjut ke dashboard</Link>
-        </p>
       </div>
     </main>
   );

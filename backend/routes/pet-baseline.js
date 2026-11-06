@@ -3,7 +3,7 @@ import { handle, json } from '@/backend/http';
 import { classifiedFeedings, deviceOrFail, petOrFail } from '@/backend/data';
 import { currentBaseline } from '@/shared/domain/severity';
 
-export const GET = handle(async () => {
-  const pet = await petOrFail((await deviceOrFail()).id);
+export const GET = handle(async (req) => {
+  const pet = await petOrFail((await deviceOrFail(req)).id);
   return json({ baseline_pct: currentBaseline(await classifiedFeedings(pet, 7)) });
 });

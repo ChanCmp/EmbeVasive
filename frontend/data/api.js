@@ -14,6 +14,10 @@ const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 const impl = USE_MOCK ? mock : real;
 
 export const getSession = (...a) => impl.getSession(...a);
+export const signIn = (...a) => impl.signIn(...a);
+export const signUp = (...a) => impl.signUp(...a);
+export const signOut = (...a) => impl.signOut(...a);
+export const claimDevice = (...a) => impl.claimDevice(...a);
 export const getDevice = (...a) => impl.getDevice(...a);
 export const getPet = (...a) => impl.getPet(...a);
 export const getSchedules = (...a) => impl.getSchedules(...a);

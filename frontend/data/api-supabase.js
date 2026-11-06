@@ -1,7 +1,6 @@
 /* Implementasi data ASLI — semua baca & tulis lewat Route Handlers di app/api
    (backend memakai service role + validasi). Browser hanya memakai Supabase
-   langsung untuk Realtime (anon key, RLS hanya mengizinkan SELECT).
-   Login belum ada: data yang dipakai = device pertama dan pet-nya. */
+   langsung untuk login dan Realtime (anon key, RLS hanya mengizinkan SELECT data milik sendiri). */
 import { getBrowserClient } from '@/frontend/supabase';
 import { addReadIds, readIds } from '@/frontend/utils/read-state';
 
@@ -9,11 +8,15 @@ const sb = () => getBrowserClient();
 
 async function call(method, url, body) {
   const isBlob = typeof Blob !== 'undefined' && body instanceof Blob;
+  const { data: { session } } = await sb().auth.getSession();
+  const headers = {};
+  if (session) headers.Authorization = `Bearer ${session.access_token}`;
+  if (body !== undefined) headers['Content-Type'] = isBlob ? 'image/jpeg' : 'application/json';
   let res;
   try {
     res = await fetch(url, {
       method,
-      headers: body === undefined ? undefined : { 'Content-Type': isBlob ? 'image/jpeg' : 'application/json' },
+      headers,
       body: body === undefined ? undefined : isBlob ? body : JSON.stringify(body),
     });
   } catch {
@@ -21,9 +24,27 @@ async function call(method, url, body) {
   }
   let data = null;
   try { data = await res.json(); } catch { /* respon tanpa body */ }
-  if (!res.ok) throw new Error((data && data.error) || `Permintaan gagal (HTTP ${res.status}).`);
+  if (!res.ok) {
+    const err = new Error((data && data.error) || `Permintaan gagal (HTTP ${res.status}).`);
+    err.status = res.status; // 401 → AppShell mengarahkan ke /login
+    throw err;
+  }
   return data;
 }
+
+// ------------------------------------------------------------------ login
+export async function signIn(email, password) {
+  const { error } = await sb().auth.signInWithPassword({ email, password });
+  if (error) throw error;
+}
+/** true = langsung masuk; false = perlu konfirmasi email dulu (opsi "Confirm email" di Supabase aktif). */
+export async function signUp(email, password) {
+  const { data, error } = await sb().auth.signUp({ email, password });
+  if (error) throw error;
+  return !!data.session;
+}
+export const signOut = () => sb().auth.signOut();
+export const claimDevice = (device_id) => call('POST', '/api/device/claim', { device_id });
 
 // ------------------------------------------------------------------ baca
 export const getSession = () => call('GET', '/api/user');

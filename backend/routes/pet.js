@@ -5,8 +5,8 @@ import { getCurrentDevice, getCurrentPet, getServiceClient } from '@/backend/sup
 import { fail, handle, json, readJson, requireInt, requireText } from '@/backend/http';
 import { deviceOrFail, petOrFail } from '@/backend/data';
 
-export const GET = handle(async () => {
-  const dev = await deviceOrFail();
+export const GET = handle(async (req) => {
+  const dev = await deviceOrFail(req);
   return json(await petOrFail(dev.id));
 });
 
@@ -23,7 +23,7 @@ export const PATCH = handle(async (req) => {
     fail('Urutan harus: Ringan < Sedang < Parah.');
   }
 
-  const dev = await getCurrentDevice();
+  const dev = await getCurrentDevice(req);
   if (!dev) fail('Perangkat belum terdaftar.', 404);
   const pet = await getCurrentPet(dev.id);
   if (!pet) fail('Pet belum terdaftar.', 404);

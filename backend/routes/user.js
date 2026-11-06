@@ -1,11 +1,9 @@
-// GET /api/user → pemilik perangkat { id, email } (login belum ada: pemilik device pertama)
-import { getServiceClient } from '@/backend/supabase';
-import { fail, handle, json } from '@/backend/http';
-import { deviceOrFail, q } from '@/backend/data';
+// GET /api/user → user yang login { id, email, device_id } (device_id null = belum menghubungkan perangkat)
+import { getCurrentDevice, getCurrentUser } from '@/backend/supabase';
+import { handle, json } from '@/backend/http';
 
-export const GET = handle(async () => {
-  const dev = await deviceOrFail();
-  const user = await q(getServiceClient().from('users').select('id, email').eq('id', dev.user_id).maybeSingle());
-  if (!user) fail('User tidak ditemukan.', 404);
-  return json(user);
+export const GET = handle(async (req) => {
+  const user = await getCurrentUser(req);
+  const dev = await getCurrentDevice(req);
+  return json({ id: user.id, email: user.email, device_id: dev ? dev.id : null });
 });

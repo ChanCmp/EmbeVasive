@@ -2,6 +2,7 @@ import 'server-only';
 /* Client Supabase dengan service role — HANYA untuk Route Handlers.
    Melewati RLS, jadi semua validasi input wajib dilakukan sebelum menulis. */
 import { createClient } from '@supabase/supabase-js';
+import { fail } from '@/backend/http';
 
 let client = null;
 
@@ -15,11 +16,20 @@ export function getServiceClient() {
   return client;
 }
 
-// Login belum ada: "perangkat milik user" = device pertama, pet = pet milik device itu.
-// Diganti filter berdasarkan auth.uid() saat login dibuat.
-export async function getCurrentDevice() {
+/** User yang login, dari header "Authorization: Bearer <access token>" (dikirim frontend/data/api-supabase.js). */
+export async function getCurrentUser(req) {
+  const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!token) fail('Silakan masuk dulu.', 401);
+  const { data, error } = await getServiceClient().auth.getUser(token);
+  if (error || !data.user) fail('Sesi habis. Silakan masuk lagi.', 401);
+  return data.user;
+}
+
+/** Perangkat milik user yang login (null bila belum menghubungkan perangkat). */
+export async function getCurrentDevice(req) {
+  const user = await getCurrentUser(req);
   const { data, error } = await getServiceClient()
-    .from('devices').select('*').order('id').limit(1).maybeSingle();
+    .from('devices').select('*').eq('user_id', user.id).order('id').limit(1).maybeSingle();
   if (error) throw error;
   return data;
 }

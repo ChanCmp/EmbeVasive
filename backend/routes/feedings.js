@@ -10,7 +10,7 @@ export const GET = handle(async (req) => {
   const days = raw == null ? 7 : Number(raw);
   if (!Number.isInteger(days) || days < 1 || days > 90) fail('days harus bilangan bulat 1–90.');
 
-  const pet = await petOrFail((await deviceOrFail()).id);
+  const pet = await petOrFail((await deviceOrFail(req)).id);
   const from = Date.now() - days * DAY;
   const rows = (await classifiedFeedings(pet, days))
     .filter((f) => new Date(f.scheduled_at).getTime() >= from)

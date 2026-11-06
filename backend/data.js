@@ -25,9 +25,10 @@ export async function q(builder) {
   return data;
 }
 
-export async function deviceOrFail() {
-  const dev = await getCurrentDevice();
-  if (!dev) fail('Perangkat belum terdaftar. Jalankan database/seed.sql.', 404);
+/** Perangkat milik user yang login. Milik orang lain / tidak ada → 404 yang sama (tidak membocorkan keberadaannya). */
+export async function deviceOrFail(req) {
+  const dev = await getCurrentDevice(req);
+  if (!dev) fail('Perangkat tidak ditemukan.', 404);
   return dev;
 }
 

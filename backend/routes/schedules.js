@@ -5,8 +5,8 @@ import { fail, handle, json, PG, readJson, requireTime } from '@/backend/http';
 import { normalizeSchedule } from '@/shared/domain/derive';
 import { deviceOrFail, q } from '@/backend/data';
 
-export const GET = handle(async () => {
-  const dev = await deviceOrFail();
+export const GET = handle(async (req) => {
+  const dev = await deviceOrFail(req);
   const rows = await q(getServiceClient()
     .from('feeding_schedule').select('*').eq('device_id', dev.id).order('feed_time'));
   return json(rows.map(normalizeSchedule));
@@ -16,7 +16,7 @@ export const POST = handle(async (req) => {
   const body = await readJson(req);
   const feed_time = requireTime(body.feed_time);
 
-  const dev = await getCurrentDevice();
+  const dev = await getCurrentDevice(req);
   if (!dev) fail('Perangkat belum terdaftar.', 404);
 
   const { data, error } = await getServiceClient()

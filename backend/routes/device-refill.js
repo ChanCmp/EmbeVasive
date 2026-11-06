@@ -2,8 +2,8 @@
 import { getCurrentDevice, getServiceClient } from '@/backend/supabase';
 import { fail, handle, json } from '@/backend/http';
 
-export const POST = handle(async () => {
-  const dev = await getCurrentDevice();
+export const POST = handle(async (req) => {
+  const dev = await getCurrentDevice(req);
   if (!dev) fail('Perangkat belum terdaftar.', 404);
 
   const now = new Date().toISOString();
